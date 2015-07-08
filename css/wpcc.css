@@ -1,0 +1,86 @@
+.highlight {
+    background-color: yellow;
+    transition: background-color .25s ease;
+}
+.comment,
+.underline {
+    border-bottom: 1px dashed #181818;
+    transition: border-bottom .25s ease;
+    cursor: pointer;
+}
+
+#add-comment,
+#view-comment {
+    display: block;
+    position: absolute;
+    border-radius: 2px;
+
+    min-width: 400px;
+
+    background-color: white;
+    box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.25);
+    padding: 20px;
+
+    opacity: 1;
+    transition: opacity 0.25s ease, top 0.25s ease, left 0.25s ease;
+}
+
+#add-comment.h,
+#view-comment.h {
+    opacity: 0;
+    height: 0;
+    width: 0;
+    min-width: 0;
+}
+
+#add-comment textarea {
+    margin-bottom: 20px;
+    height: 150px;
+    background: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+},
+#view-comment p {
+    margin-bottom: 20px;
+    height: 150px;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, a, li {
+    transition: color .25s ease;
+}
+
+body.cinema h1,
+body.cinema h2,
+body.cinema h3,
+body.cinema h4,
+body.cinema h5,
+body.cinema h6,
+body.cinema p,
+body.cinema span,
+body.cinema a,
+body.cinema li {
+    color: rgba(18, 18, 18, 0.25);
+}
+
+body.cinema span {
+    border-bottom: none;
+}
+
+span.comment.shine {
+    color: rgba(18, 18, 18, 1);
+    border-bottom: 1px dashed #181818;
+}
+body.cinema span.highlight,
+body.cinema #view-comment p {
+    color: rgba(18, 18, 18, 1) !important;
+}
+
+#cc {
+    display: block;
+    opacity: 1;
+}
+
+#cc.h {
+    display: none;
+    opacity: 0;
+}

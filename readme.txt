@@ -1,0 +1,43 @@
+=== Plugin Name ===
+Contributors: 
+Tags: comments, inline, medium, context
+Requires at least: 4.0
+Tested up to: 4.2.2
+Stable tag: 4.2.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+A Wordpress Plugin to attach comments to inline text. Medium Style.
+
+== Description ==
+
+WP Context Comments is a simple plugin in beta phase. It allows logged in users to highlight text on posts and pages and attach comments directly to those highlights.
+
+== Installation ==
+
+1. Upload `wpcc` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Your all set to go
+
+== Frequently Asked Questions ==
+
+Contact me at y@thgie.ch
+
+== Screenshots ==
+
+Comming up.
+
+== Changelog ==
+
+= 0.2 =
+
+* Sanitized/validated all user input.
+* No more hardcoded path.
+
+= 0.1 =
+
+* Reacted to WP Plugin check suggestions.
+
+= 0.0.1 =
+
+* proof of concept
