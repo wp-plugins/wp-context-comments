@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.2
+Version: 0.2.1
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -18,8 +18,8 @@ function wpcc_init() {
 
 	$base_path = plugin_dir_url( __FILE__ );
 
-	global $post;
-	$postid = url_to_postid( "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] );
+	$url = home_url(add_query_arg(array()));
+	$postid = url_to_postid($url);
 
 	$args = array(
 		'post_id' => $postid

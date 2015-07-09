@@ -29,6 +29,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.2.1 =
+
+* Post ID wasn't grabbed correctly on posts. Fixed.
+
 = 0.2 =
 
 * Sanitized/validated all user input.
