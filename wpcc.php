@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.2.1
+Version: 0.2.3
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -15,8 +15,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 // le setting
 
-// add_action( 'admin_menu', 'wpcc_add_admin_menu' );
-// add_action( 'admin_init', 'wpcc_settings_init' );
+add_action( 'admin_menu', 'wpcc_add_admin_menu' );
+add_action( 'admin_init', 'wpcc_settings_init' );
 
 
 function wpcc_add_admin_menu(  ) {
@@ -45,21 +45,21 @@ function wpcc_settings_init(  ) {
 		'wpcc_pluginPage_section'
 	);
 
-	// add_settings_field(
-	// 	'wpcc_custom_css',
-	// 	__( 'Custom CSS', 'wordpress' ),
-	// 	'wpcc_custom_css_render',
-	// 	'pluginPage',
-	// 	'wpcc_pluginPage_section'
-	// );
-
 	add_settings_field(
-		'wpcc_anon_commenting',
-		__( 'Allow Anonymous Commenting', 'wordpress' ),
-		'wpcc_anon_commenting_render',
+		'wpcc_custom_css',
+		__( 'Custom CSS', 'wordpress' ),
+		'wpcc_custom_css_render',
 		'pluginPage',
 		'wpcc_pluginPage_section'
 	);
+
+	// add_settings_field(
+	// 	'wpcc_anon_commenting',
+	// 	__( 'Allow Anonymous Commenting', 'wordpress' ),
+	// 	'wpcc_anon_commenting_render',
+	// 	'pluginPage',
+	// 	'wpcc_pluginPage_section'
+	// );
 
 }
 
@@ -77,9 +77,7 @@ function wpcc_custom_css_render(  ) {
 
 	$options = get_option( 'wpcc_settings' );
 	?>
-	<textarea cols='40' rows='5' name='wpcc_settings[wpcc_custom_css]'>
-		<?php echo $options['wpcc_custom_css']; ?>
- 	</textarea>
+	<textarea cols='40' rows='5' name='wpcc_settings[wpcc_custom_css]'><?php echo $options['wpcc_custom_css']; ?></textarea>
 	<?php
 
 }
@@ -101,8 +99,8 @@ function wpcc_settings_section_callback(  ) {
 	echo '<h4>Set Settings as follows:</h4>';
 	echo '<ul>';
 	echo '<li>- With CSS Selectors you can limit the commentable sections.</li>';
-	// echo '<li>- Custom CSS enables you to overwrite the default styles.</li>';
-	echo '<li>- And anonymous commenting...</li>';
+	echo '<li>- Custom CSS enables you to overwrite the default styles.</li>';
+	// echo '<li>- And anonymous commenting...</li>';
 	echo '</ul>';
 
 }
@@ -146,7 +144,6 @@ function wpcc_init() {
 		$anon = 'true';
 	}
 
-
 	foreach($comments as $comment):
 		$comment->context = get_comment_meta($comment->comment_ID, 'context');
 	endforeach;
@@ -162,6 +159,7 @@ function wpcc_init() {
 			'postid'    => $postid,
 			'comments'  => json_encode($comments),
 			'logged_in' => is_user_logged_in(),
+			'selectors' => $options['wpcc_css_selectors'],
 			'anon' 		=> $anon,
 			'admin_url' => admin_url()
 		));
@@ -171,6 +169,10 @@ function wpcc_init() {
 		));
 	}
 	wp_enqueue_style('wpcc', $base_path . 'css/wpcc.css');
+
+	if(strlen($options['wpcc_custom_css']) > 0){
+		wp_add_inline_style('wpcc', $options['wpcc_custom_css']);
+	}
 
 }
 

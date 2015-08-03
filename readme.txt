@@ -29,10 +29,13 @@ Comming up.
 
 == TODO ==
 
-- Add Settings Page
-- Add Selectors Option to limit markability
 - Add Option for Anonymous Comments
-- Add Default Styling and Overwrite Options
+
+== Changelog ==
+
+= 0.2.3 =
+
+* Tiny Style fixes
 
 == Changelog ==
 

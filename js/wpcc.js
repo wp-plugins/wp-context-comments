@@ -48,8 +48,8 @@ jQuery(function() {
         jQuery('#view-comment').addClass('h')
     })
 
-
     if(wpccparams.logged_in){
+
         jQuery('body').append('<div id="add-comment" class="h"><textarea id="comment"></textarea><button>Comment</button></div>')
 
         rangy.init();
@@ -60,7 +60,7 @@ jQuery(function() {
             tagNames: ["span", "a"]
         }));
 
-        jQuery('body').on('mouseup', function(){
+        jQuery(wpccparams.selectors).on('mouseup', function(){
             if(rangy.getSelection().toString().length > 0){
                 highlighter.removeAllHighlights()
                 highlighter.highlightSelection("highlight")
@@ -84,19 +84,12 @@ jQuery(function() {
         })
 
         jQuery('#add-comment button').on('click', function(){
-            console.log({
-               'id': wpccparams.postid,
-               'action': 'wpcc_etherify',
-               'content': jQuery('#add-comment textarea').val(),
-               'context': jQuery('.highlight').text()
-            })
              jQuery.post( wpccparams.admin_url+'admin-ajax.php', {
                 'id': wpccparams.postid,
                 'action': 'wpcc_etherify',
                 'content': jQuery('#add-comment textarea').val(),
                 'context': jQuery('.highlight').text()
              }, function( data ) {
-                 console.log(data)
                 jQuery('.highlight').removeClass('highlight').addClass('underline')
                 jQuery('#add-comment').addClass('h')
              });
