@@ -13,6 +13,120 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 */
 
+// le setting
+
+// add_action( 'admin_menu', 'wpcc_add_admin_menu' );
+// add_action( 'admin_init', 'wpcc_settings_init' );
+
+
+function wpcc_add_admin_menu(  ) {
+
+	add_options_page( 'WPCC', 'WPCC', 'manage_options', 'wpcc', 'wpcc_options_page' );
+
+}
+
+
+function wpcc_settings_init(  ) {
+
+	register_setting( 'pluginPage', 'wpcc_settings' );
+
+	add_settings_section(
+		'wpcc_pluginPage_section',
+		__( 'My relationships with my cats has saved me from a deadly, pervasive ignorance. -  William S. Burroughs', 'wordpress' ),
+		'wpcc_settings_section_callback',
+		'pluginPage'
+	);
+
+	add_settings_field(
+		'wpcc_css_selectors',
+		__( 'CSS Selectors', 'wordpress' ),
+		'wpcc_css_selectors_render',
+		'pluginPage',
+		'wpcc_pluginPage_section'
+	);
+
+	// add_settings_field(
+	// 	'wpcc_custom_css',
+	// 	__( 'Custom CSS', 'wordpress' ),
+	// 	'wpcc_custom_css_render',
+	// 	'pluginPage',
+	// 	'wpcc_pluginPage_section'
+	// );
+
+	add_settings_field(
+		'wpcc_anon_commenting',
+		__( 'Allow Anonymous Commenting', 'wordpress' ),
+		'wpcc_anon_commenting_render',
+		'pluginPage',
+		'wpcc_pluginPage_section'
+	);
+
+}
+
+
+function wpcc_css_selectors_render(  ) {
+
+	$options = get_option( 'wpcc_settings' );
+	?>
+	<input type='text' name='wpcc_settings[wpcc_css_selectors]' value='<?php echo $options['wpcc_css_selectors']; ?>'>
+	<?php
+
+}
+
+function wpcc_custom_css_render(  ) {
+
+	$options = get_option( 'wpcc_settings' );
+	?>
+	<textarea cols='40' rows='5' name='wpcc_settings[wpcc_custom_css]'>
+		<?php echo $options['wpcc_custom_css']; ?>
+ 	</textarea>
+	<?php
+
+}
+
+
+function wpcc_anon_commenting_render(  ) {
+
+	$options = get_option( 'wpcc_settings' );
+	?>
+	<input type='checkbox' name='wpcc_settings[wpcc_anon_commenting]' <?php checked( $options['wpcc_anon_commenting'], 1 ); ?> value='1'>
+	<?php
+
+}
+
+
+
+function wpcc_settings_section_callback(  ) {
+
+	echo '<h4>Set Settings as follows:</h4>';
+	echo '<ul>';
+	echo '<li>- With CSS Selectors you can limit the commentable sections.</li>';
+	// echo '<li>- Custom CSS enables you to overwrite the default styles.</li>';
+	echo '<li>- And anonymous commenting...</li>';
+	echo '</ul>';
+
+}
+
+
+function wpcc_options_page(  ) {
+
+	?>
+	<form action='options.php' method='post'>
+
+		<h2>WP Context Comments</h2>
+
+		<?php
+		settings_fields( 'pluginPage' );
+		do_settings_sections( 'pluginPage' );
+		submit_button();
+		?>
+
+	</form>
+	<?php
+
+}
+// le action
+
 add_action('init', 'wpcc_init', 5, 0);
 function wpcc_init() {
 
@@ -25,6 +139,13 @@ function wpcc_init() {
 		'post_id' => $postid
 	);
 	$comments = get_comments($args);
+	$options = get_option( 'wpcc_settings' );
+	$anon = 'false';
+
+	if($options['wpcc_anon_commenting'] == 1){
+		$anon = 'true';
+	}
+
 
 	foreach($comments as $comment):
 		$comment->context = get_comment_meta($comment->comment_ID, 'context');
@@ -41,6 +162,7 @@ function wpcc_init() {
 			'postid'    => $postid,
 			'comments'  => json_encode($comments),
 			'logged_in' => is_user_logged_in(),
+			'anon' 		=> $anon,
 			'admin_url' => admin_url()
 		));
 	} else {

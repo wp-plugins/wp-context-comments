@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: 
+Contributors:
 Tags: comments, inline, medium, context
 Requires at least: 4.0
 Tested up to: 4.2.2
@@ -27,7 +27,18 @@ Contact me at y@thgie.ch
 
 Comming up.
 
+== TODO ==
+
+- Add Settings Page
+- Add Selectors Option to limit markability
+- Add Option for Anonymous Comments
+- Add Default Styling and Overwrite Options
+
 == Changelog ==
+
+= 0.2.2 =
+
+* Tiny Style fixes
 
 = 0.2.1 =
 

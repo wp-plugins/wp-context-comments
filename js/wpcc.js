@@ -1,11 +1,9 @@
-$ = jQuery;
+jQuery(function() {
 
-$(function() {
-
-    $('body').append('<div id="view-comment" class="h"><p></p><button id="close-comment">Close</button></div>')
+    jQuery('body').append('<div id="view-comment" class="h"><p></p><button id="close-comment">Close</button></div>')
 
     // init
-    data = $.parseJSON(wpccparams.comments)
+    data = jQuery.parseJSON(wpccparams.comments)
 
     for(c in data){
         var searchResultApplier = rangy.createClassApplier('comment', {
@@ -26,33 +24,33 @@ $(function() {
         }
     }
 
-    $('span.comment').on('hover', function(){
-        $('body').toggleClass('cinema')
-        $(this).toggleClass('shine')
+    jQuery('span.comment').on('hover', function(){
+        jQuery('body').toggleClass('cinema')
+        jQuery(this).toggleClass('shine')
     }, function(){
-        $('body').toggleClass('cinema')
-        $(this).toggleClass('shine')
+        jQuery('body').toggleClass('cinema')
+        jQuery(this).toggleClass('shine')
     }).on('click', function(){
 
         for(c in data){
-            if($(this).data('id').toString() === data[c]['comment_ID'].toString()){
-                $('#view-comment p').text(data[c]['comment_content'])
+            if(jQuery(this).data('id').toString() === data[c]['comment_ID'].toString()){
+                jQuery('#view-comment p').text(data[c]['comment_content'])
             }
         }
 
-        $('#view-comment').css({
-            top: $(this).offset().top + $(this).height() + 20,
-            left: $(this).offset().left
+        jQuery('#view-comment').css({
+            top: jQuery(this).offset().top + jQuery(this).height() + 20,
+            left: jQuery(this).offset().left
         }).removeClass('h')
     })
 
-    $('#view-comment button').on('click', function(){
-        $('#view-comment').addClass('h')
+    jQuery('#view-comment button').on('click', function(){
+        jQuery('#view-comment').addClass('h')
     })
 
 
     if(wpccparams.logged_in){
-        $('body').append('<div id="add-comment" class="h"><textarea id="comment"></textarea><button>Comment</button></div>')
+        jQuery('body').append('<div id="add-comment" class="h"><textarea id="comment"></textarea><button>Comment</button></div>')
 
         rangy.init();
 
@@ -62,45 +60,45 @@ $(function() {
             tagNames: ["span", "a"]
         }));
 
-        $('body').on('mouseup', function(){
+        jQuery('body').on('mouseup', function(){
             if(rangy.getSelection().toString().length > 0){
                 highlighter.removeAllHighlights()
                 highlighter.highlightSelection("highlight")
                 rangy.getSelection().removeAllRanges()
 
-                $('#add-comment').css({
-                    top: $('.highlight').offset().top + $('.highlight').height() + 20,
-                    left: $('.highlight').offset().left
+                jQuery('#add-comment').css({
+                    top: jQuery('.highlight').offset().top + jQuery('.highlight').height() + 20,
+                    left: jQuery('.highlight').offset().left
                 }).removeClass('h')
 
-                $('#add-comment textarea').val('').focus()
+                jQuery('#add-comment textarea').val('').focus()
             }
         })
 
-        $('body').on('keyup', function(e){
+        jQuery('body').on('keyup', function(e){
             if(e.keyCode === 27){
                 highlighter.removeAllHighlights()
-                $('#add-comment').addClass('h')
-                $('#view-comment').addClass('h')
+                jQuery('#add-comment').addClass('h')
+                jQuery('#view-comment').addClass('h')
             }
         })
 
-        $('#add-comment button').on('click', function(){
+        jQuery('#add-comment button').on('click', function(){
             console.log({
                'id': wpccparams.postid,
                'action': 'wpcc_etherify',
-               'content': $('#add-comment textarea').val(),
-               'context': $('.highlight').text()
+               'content': jQuery('#add-comment textarea').val(),
+               'context': jQuery('.highlight').text()
             })
-             $.post( wpccparams.admin_url+'admin-ajax.php', {
+             jQuery.post( wpccparams.admin_url+'admin-ajax.php', {
                 'id': wpccparams.postid,
                 'action': 'wpcc_etherify',
-                'content': $('#add-comment textarea').val(),
-                'context': $('.highlight').text()
+                'content': jQuery('#add-comment textarea').val(),
+                'context': jQuery('.highlight').text()
              }, function( data ) {
                  console.log(data)
-                $('.highlight').removeClass('highlight').addClass('underline')
-                $('#add-comment').addClass('h')
+                jQuery('.highlight').removeClass('highlight').addClass('underline')
+                jQuery('#add-comment').addClass('h')
              });
         })
     }
