@@ -35,9 +35,8 @@ Comming up.
 
 = 0.2.3 =
 
-* Tiny Style fixes
-
-== Changelog ==
+* Added Settings for Custom CSS and Selectors
+* Selectors limit where a comment can be made.
 
 = 0.2.2 =
 
