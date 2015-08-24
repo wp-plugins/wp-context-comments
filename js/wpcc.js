@@ -1,40 +1,55 @@
 jQuery(function() {
 
-    jQuery('body').append('<div id="view-comment" class="h"><p></p><button id="close-comment">Close</button></div>')
-
     // init
     data = jQuery.parseJSON(wpccparams.comments)
+    comments = {}
 
     for(c in data){
-        var searchResultApplier = rangy.createClassApplier('comment', {
-            'elementAttributes': {
-                'data-id': data[c]['comment_ID']
-            }
-        });
-        var range = rangy.createRange();
-        var term = data[c]['context'][0];
 
-        range.selectNodeContents(document.body);
-
-        if(term !== "") {
-            while (range.findText(term)) {
-                searchResultApplier.applyToRange(range);
-                range.collapse(false);
+        if(comments[data[c]['context']] === undefined){
+            comments[data[c]['context']] = {
+                count: 0,
+                ids: ''
             }
+        }
+
+        comments[data[c]['context']].count++
+
+        if(comments[data[c]['context']]['ids'].length > 0){
+            comments[data[c]['context']].ids += ','+data[c]['comment_ID']
+        } else {
+            comments[data[c]['context']].ids = data[c]['comment_ID']
         }
     }
 
-    jQuery('span.comment').on('hover', function(){
-        jQuery('body').toggleClass('cinema')
-        jQuery(this).toggleClass('shine')
-    }, function(){
-        jQuery('body').toggleClass('cinema')
-        jQuery(this).toggleClass('shine')
-    }).on('click', function(){
+    for(c in comments){
+        jQuery(wpccparams.selectors+":contains('"+c+"')").html(function(_, html) {
+            var re_string = "("+RegExp.quote(c)+")"
+            var re = new RegExp(re_string, "g");
+            return html.replace(re, '$1<span data-id="'+comments[c]['ids']+'" class="comment">'+comments[c]['count']+'</span>');
+        });
+    }
+
+    jQuery('span.comment').on('click', function(){
+
+        jQuery('#view-comment p').text('');
 
         for(c in data){
-            if(jQuery(this).data('id').toString() === data[c]['comment_ID'].toString()){
-                jQuery('#view-comment p').text(data[c]['comment_content'])
+
+            var ids = []
+
+            if(typeof jQuery(this).data('id') === 'number'){
+                ids.push(jQuery(this).data('id'))
+            } else {
+                ids = jQuery(this).data('id').split(',')
+            }
+
+            for(id in ids){
+                if(ids[id].toString() === data[c]['comment_ID'].toString()){
+                    jQuery('#view-comment p').html(
+                        jQuery('#view-comment p').html()+data[c]['comment_content']+'<br>'
+                    )
+                }
             }
         }
 
@@ -42,58 +57,66 @@ jQuery(function() {
             top: jQuery(this).offset().top + jQuery(this).height() + 20,
             left: jQuery(this).offset().left
         }).removeClass('h')
+
     })
 
     jQuery('#view-comment button').on('click', function(){
         jQuery('#view-comment').addClass('h')
     })
 
-    if(wpccparams.logged_in){
+    if(true){
 
-        jQuery('body').append('<div id="add-comment" class="h"><textarea id="comment"></textarea><button>Comment</button></div>')
+        window.selecting(jQuery(wpccparams.selectors), function(selector, e) {
 
-        rangy.init();
+            if(selector.length){
 
-        highlighter = rangy.createHighlighter();
-        highlighter.addClassApplier(rangy.createClassApplier("highlight", {
-            ignoreWhiteSpace: true,
-            tagNames: ["span", "a"]
-        }));
-
-        jQuery(wpccparams.selectors).on('mouseup', function(){
-            if(rangy.getSelection().toString().length > 0){
-                highlighter.removeAllHighlights()
-                highlighter.highlightSelection("highlight")
-                rangy.getSelection().removeAllRanges()
+                s = window.getSelection();
+                oRange = s.getRangeAt(0);
+                oRect = oRange.getBoundingClientRect();
 
                 jQuery('#add-comment').css({
-                    top: jQuery('.highlight').offset().top + jQuery('.highlight').height() + 20,
-                    left: jQuery('.highlight').offset().left
+                    top: jQuery(window).scrollTop() + oRect.top + oRect.height + 10,
+                    left: jQuery(wpccparams.selectors).offset().left
                 }).removeClass('h')
+
+                var re_string = "["+wpccparams.re_chars+"]([^"+wpccparams.re_chars+"]*?"+RegExp.quote(selector)+".*?["+wpccparams.re_chars+"])"
+                var re = new RegExp(re_string, "g");
+                var str = '.'+jQuery(wpccparams.selectors).text();
+                var m;
+
+                while ((m = re.exec(str)) !== null) {
+                    if (m.index === re.lastIndex) {
+                        re.lastIndex++;
+                    }
+                    jQuery('#add-comment p#contextstring').text(m[1].trim())
+                    jQuery('#add-comment input[name=context]').val(m[1].trim())
+                }
 
                 jQuery('#add-comment textarea').val('').focus()
             }
-        })
+        });
 
         jQuery('body').on('keyup', function(e){
             if(e.keyCode === 27){
-                highlighter.removeAllHighlights()
                 jQuery('#add-comment').addClass('h')
                 jQuery('#view-comment').addClass('h')
             }
         })
 
-        jQuery('#add-comment button').on('click', function(){
-             jQuery.post( wpccparams.admin_url+'admin-ajax.php', {
-                'id': wpccparams.postid,
-                'action': 'wpcc_etherify',
-                'content': jQuery('#add-comment textarea').val(),
-                'context': jQuery('.highlight').text()
-             }, function( data ) {
-                jQuery('.highlight').removeClass('highlight').addClass('underline')
+        jQuery('#add-comment .close').on('click', function(){
+            jQuery('#add-comment').addClass('h')
+            jQuery('#view-comment').addClass('h')
+        })
+
+        jQuery('body').on('click', function (e) {
+            if(jQuery(e.target).closest('#add-comment').length === 0){
                 jQuery('#add-comment').addClass('h')
-             });
+            }
         })
     }
 
 });
+
+RegExp.quote = function(str) {
+    return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+};

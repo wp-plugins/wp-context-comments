@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.2.3
+Version: 0.3.2
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -46,6 +46,14 @@ function wpcc_settings_init(  ) {
 	);
 
 	add_settings_field(
+		'wpcc_re_characters',
+		__( 'CSS Selectors', 'wordpress' ),
+		'wpcc_re_characters_render',
+		'pluginPage',
+		'wpcc_pluginPage_section'
+	);
+
+	add_settings_field(
 		'wpcc_custom_css',
 		__( 'Custom CSS', 'wordpress' ),
 		'wpcc_custom_css_render',
@@ -69,6 +77,20 @@ function wpcc_css_selectors_render(  ) {
 	$options = get_option( 'wpcc_settings' );
 	?>
 	<input type='text' name='wpcc_settings[wpcc_css_selectors]' value='<?php echo $options['wpcc_css_selectors']; ?>'>
+	<?php
+
+}
+
+function wpcc_re_characters_render(  ) {
+
+	$options = get_option( 'wpcc_settings' );
+
+	if(strlen($options['wpcc_re_characters']) == 0){
+		$options['wpcc_re_characters'] = '.:!?';
+	}
+
+	?>
+	<input type='text' name='wpcc_settings[wpcc_re_characters]' value='<?php echo $options['wpcc_re_characters']; ?>'>
 	<?php
 
 }
@@ -123,6 +145,49 @@ function wpcc_options_page(  ) {
 	<?php
 
 }
+
+add_action( 'comment_form_logged_in_after', 'wpcc_comment_additional_fields' );
+add_action( 'comment_form_after_fields', 'wpcc_comment_additional_fields' );
+
+function wpcc_comment_additional_fields () {
+	echo '<p id="contextstring" style="max-width: 500px;"></p>';
+	echo '<input id="context" name="context" type="hidden"/>';
+	echo '<input id="type" name="type" type="hidden" value="wpcc"/>';
+}
+
+add_action( 'comment_post', 'wpcc_save_comment_meta_data' );
+function wpcc_save_comment_meta_data( $comment_id ) {
+	if ( ( isset( $_POST['context'] ) ) && ( $_POST['context'] != '') ){
+		$context = wp_filter_nohtml_kses($_POST['context']);
+		add_comment_meta( $comment_id, 'context', $context );
+	}
+	if ( ( isset( $_POST['type'] ) ) && ( $_POST['type'] != '') ){
+		$type = wp_filter_nohtml_kses($_POST['type']);
+		add_comment_meta( $comment_id, 'type', $type );
+	}
+}
+
+function wpcc_footer() {
+	$base_path = plugin_dir_url( __FILE__ );
+
+	$url = home_url(add_query_arg(array()));
+	$postid = url_to_postid($url);
+
+	if($postid != 0){
+		$comment_args = array(
+			'comment_notes_before' => '',
+			'comment_notes_after' => '',
+
+		);
+		echo '<div id="add-comment" class="h">';
+		comment_form($comment_args, $postid);
+		echo '</div>';
+		echo '<div id="view-comment" class="h"><p></p><button id="close-comment">Close</button></div>';
+	}
+}
+
+add_action('wp_footer', 'wpcc_footer');
+
 // le action
 
 add_action('init', 'wpcc_init', 5, 0);
@@ -144,24 +209,27 @@ function wpcc_init() {
 		$anon = 'true';
 	}
 
+	if(strlen($options['wpcc_re_characters']) == 0){
+		$options['wpcc_re_characters'] = '.:!?';
+	}
+
 	foreach($comments as $comment):
 		$comment->context = get_comment_meta($comment->comment_ID, 'context');
 	endforeach;
 
-	wp_enqueue_script('rangy-core', $base_path . 'js/rangy/rangy-core.js');
-	wp_enqueue_script('rangy-classapplier', $base_path . 'js/rangy/rangy-classapplier.js');
-	wp_enqueue_script('rangy-highlighter', $base_path . 'js/rangy/rangy-highlighter.js');
-	wp_enqueue_script('rangy-textrange', $base_path . 'js/rangy/rangy-textrange.js');
+	wp_enqueue_script('selecting', $base_path . 'js/selecting.min.js');
+	wp_enqueue_script('wpcc', $base_path . 'js/wpcc.js', array('jquery', 'selecting'));
 
-	wp_enqueue_script('wpcc', $base_path . 'js/wpcc.js', array('jquery', 'rangy-core'));
 	if($postid != 0){
+
 		wp_localize_script( 'wpcc', 'wpccparams', array(
-			'postid'    => $postid,
-			'comments'  => json_encode($comments),
-			'logged_in' => is_user_logged_in(),
-			'selectors' => $options['wpcc_css_selectors'],
-			'anon' 		=> $anon,
-			'admin_url' => admin_url()
+			'postid'       => $postid,
+			'comments'     => json_encode($comments),
+			'logged_in'    => is_user_logged_in(),
+			'selectors'    => $options['wpcc_css_selectors'],
+			're_chars'     => $options['wpcc_re_characters'],
+			'anon' 		   => $anon,
+			'admin_url'    => admin_url()
 		));
 	} else {
 		wp_localize_script( 'wpcc', 'wpccparams', array(
@@ -175,64 +243,3 @@ function wpcc_init() {
 	}
 
 }
-
-function wpcc_etherify() {
-
-	$valid_id = intval($_POST['id']);
-	if(!$valid_id){
-		echo 'invalid id';
-		wp_die();
-	}
-
-	$content = sanitize_text_field($_POST['content']);
-
-	$data = array(
-		'comment_post_ID' => $valid_id,
-		'comment_content' => $content,
-		'user_id' => get_current_user_id()
-	);
-
-	$comment_id = wp_new_comment($data);
-
-	if((isset($_POST['context'])) && ($_POST['context'] != '')) {
-		$context = sanitize_text_field($_POST['context']);
-		add_comment_meta( $comment_id, 'context', $context );
-		add_comment_meta( $comment_id, 'type', 'wpcc' );
-	}
-
-	wp_notify_postauthor($comment_id);
-
-	echo 'success';
-	wp_die();
-}
-
-add_action( 'wp_ajax_wpcc_etherify', 'wpcc_etherify' );
-add_action( 'wp_ajax_nopriv_wpcc_etherify', 'wpcc_etherify' );
-
-function wpcc_solidify() {
-
-	if((isset( $_POST['id'])) && ($_POST['id'] != '')) {
-
-		$valid_id = intval($_POST['id']);
-		if(!$valid_id){
-			echo 'invalid id';
-			wp_die();
-		}
-
-		$args = array(
-			'post_id' => $valid_id
-		);
-		$comments = get_comments($args);
-
-		foreach($comments as $comment):
-			$comment->context = get_comment_meta($comment->comment_ID, 'context');
-		endforeach;
-
-		echo json_encode($comments);
-	}
-
-	wp_die();
-}
-
-add_action( 'wp_ajax_wpcc_solidify', 'wpcc_solidify' );
-add_action( 'wp_ajax_nopriv_wpcc_solidify', 'wpcc_solidify' );

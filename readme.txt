@@ -29,14 +29,22 @@ Comming up.
 
 == TODO ==
 
-- Add Option for Anonymous Comments
+- Add close button
+- Add comment on comment function
 
 == Changelog ==
 
-= 0.2.3 =
+= 0.3.2 =
 
-* Added Settings for Custom CSS and Selectors
-* Selectors limit where a comment can be made.
+* Added Regex Character Setting.
+
+= 0.3.1 =
+
+* Fixed view comment.
+
+= 0.3 =
+
+* Major overhaul. Skipped rangy.js. Now less obstrusive and uses official comment form mechanic.
 
 = 0.2.2 =
 
