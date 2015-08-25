@@ -33,6 +33,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.4.2 =
+
+* Exclude comment Marker from highlighting.
+
 = 0.4.1 =
 
 * Moved content modifying (comment markers) to backend.

@@ -23,6 +23,21 @@ span.comment {
     padding-left: 5px;
     line-height: 14px;
 }
+span.comment.c1:after {
+    content: "1";
+}
+span.comment.c2:after {
+    content: "2";
+}
+span.comment.c3:after {
+    content: "3";
+}
+span.comment.c4:after {
+    content: "4";
+}
+span.comment.c5:after {
+    content: "5";
+}
 p.context-at-comment {
     font-size: 0.75em;
     margin-bottom: 5px;

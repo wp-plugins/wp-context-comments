@@ -74,8 +74,6 @@ jQuery(function() {
                 range = selection.getRangeAt(0);
                 rectangle = range.getBoundingClientRect();
 
-                console.log(rectangle)
-
                 var _left = rectangle.left,
                     _right = rectangle.right,
                     _center = _left + (_right - _left) / 2,
@@ -96,6 +94,8 @@ jQuery(function() {
                 })
 
                 // jQuery('#add-comment textarea').val('').focus()
+            } else {
+                jQuery(wpccparams.selectors).find('.comment').show()
             }
         });
 

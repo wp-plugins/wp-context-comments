@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.4.1
+Version: 0.4.2
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -294,13 +294,15 @@ function wpcc_modify_content($content) {
 		    }
 		}
 
+		$style = '';
+
 		foreach($comments_merged as $key => $comment){
 
 			$re_base = preg_quote($key);
             $parts = explode(' ', $re_base);
             $re = '/('.implode('\\s*?(?:<\/?[^>]*?>)?\\s*?', $parts).')/';
 
-			$content = preg_replace($re, '$1<span data-id="'.$comments_merged[$key]['ids'].'" class="comment">'.$comments_merged[$key]['count'].'</span>', $content);
+			$content = preg_replace($re, '$1<span data-id="'.$comments_merged[$key]['ids'].'" class="comment c'.$comments_merged[$key]['count'].'"></span>', $content);
 		}
 	}
 
