@@ -29,15 +29,19 @@ Comming up.
 
 == TODO ==
 
-- Add little Popup Menu
 - Add comment on comment function
 
 == Changelog ==
+
+= 0.4 =
+
+* Added popup menu.
 
 = 0.3.5 =
 
 * Close Button on View Comment now translatable.
 * Fixed Regex when html chunks in selected text.
+* Enhanced traditional comment view with context.
 
 = 0.3.4 =
 

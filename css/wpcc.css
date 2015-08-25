@@ -23,6 +23,10 @@ span.comment {
     padding-left: 5px;
     line-height: 14px;
 }
+p.context-at-comment {
+    font-size: 0.75em;
+    margin-bottom: 5px;
+}
 
 #add-comment,
 #view-comment {
@@ -45,8 +49,8 @@ span.comment {
 #add-comment.h,
 #view-comment.h {
     opacity: 0;
-    height: 0;
-    width: 0;
+    height: 0px;
+    width: 0px;
     min-width: 0;
 }
 
@@ -60,6 +64,23 @@ span.comment {
 #view-comment p {
     margin-bottom: 20px;
     height: 150px;
+}
+
+#add-comment-btn {
+    background-image: url(../img/comment-icon-small.png);
+    background-size: cover;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    cursor: pointer;
+}
+
+#add-comment-btn.light {
+    background-image: url(../img/comment-icon-small-white.png);
+}
+
+#add-comment-btn.h {
+    display: none;
 }
 
 h1, h2, h3, h4, h5, h6, p, span, a, li {

@@ -97,16 +97,32 @@ jQuery(function() {
                     jQuery('#add-comment input[name=context]').val(m[1].trim())
                 }
 
-                jQuery('#add-comment textarea').val('').focus()
+                selection = window.getSelection();
+                range = selection.getRangeAt(0);
+                rectangle = range.getBoundingClientRect();
 
-                s = window.getSelection();
-                oRange = s.getRangeAt(0);
-                oRect = oRange.getBoundingClientRect();
+                console.log(rectangle)
+
+                var _left = rectangle.left,
+                    _right = rectangle.right,
+                    _center = _left + (_right - _left) / 2,
+                    _top = jQuery(window).scrollTop() + rectangle.top + rectangle.height,
+                    _height = rectangle.height;
 
                 jQuery('#add-comment').css({
-                    top: jQuery(window).scrollTop() + oRect.top + oRect.height + 10,
+                    top: jQuery(window).scrollTop() + rectangle.top + rectangle.height + 10,
                     left: jQuery(wpccparams.selectors).offset().left
-                }).removeClass('h')
+                })
+
+                jQuery('#add-comment-btn').css({
+                    left: _right - jQuery('#add-comment-btn').width() / 2,
+                    top: _top - _height - jQuery('#add-comment-btn').height() - 3
+                }).removeClass('h').click(function(){
+                    jQuery('#add-comment').removeClass('h')
+                    jQuery('#add-comment-btn').addClass('h')
+                })
+
+                // jQuery('#add-comment textarea').val('').focus()
             }
         });
 
@@ -114,17 +130,20 @@ jQuery(function() {
             if(e.keyCode === 27){
                 jQuery('#add-comment').addClass('h')
                 jQuery('#view-comment').addClass('h')
+                jQuery('#add-comment-btn').addClass('h')
             }
         })
 
         jQuery('#add-comment .close').on('click', function(){
             jQuery('#add-comment').addClass('h')
             jQuery('#view-comment').addClass('h')
+            jQuery('#add-comment-btn').addClass('h')
         })
 
         jQuery('body').on('click', function (e) {
-            if(jQuery(e.target).closest('#add-comment').length === 0){
+            if(jQuery(e.target).closest('#add-comment, #add-comment-btn').length === 0){
                 jQuery('#add-comment').addClass('h')
+                jQuery('#add-comment-btn').addClass('h')
             }
         })
     }
