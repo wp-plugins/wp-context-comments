@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.3.3
+Version: 0.3.5
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -182,7 +182,7 @@ function wpcc_footer() {
 		echo '<div id="add-comment" class="h">';
 		comment_form($comment_args, $postid);
 		echo '</div>';
-		echo '<div id="view-comment" class="h"><p></p><button id="close-comment">Close</button></div>';
+		echo '<div id="view-comment" class="h"><p></p><button id="close-comment">'.__( 'Schliessen', 'wordpress' ).'</button></div>';
 	}
 }
 

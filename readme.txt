@@ -30,10 +30,18 @@ Comming up.
 == TODO ==
 
 - Add little Popup Menu
-- Add close button
 - Add comment on comment function
 
 == Changelog ==
+
+= 0.3.5 =
+
+* Close Button on View Comment now translatable.
+* Fixed Regex when html chunks in selected text.
+
+= 0.3.4 =
+
+* Since it seems cool to jump versions - here is a version jump.
 
 = 0.3.3 =
 

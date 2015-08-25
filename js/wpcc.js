@@ -23,10 +23,9 @@ jQuery(function() {
     }
 
     for(c in comments){
+
         jQuery(wpccparams.selectors+":contains('"+c+"')").html(function(_, html) {
-            var re_string = "("+RegExp.quote(c)+")"
-            var re = new RegExp(re_string, "g");
-            return html.replace(re, '$1<span data-id="'+comments[c]['ids']+'" class="comment">'+comments[c]['count']+'</span>');
+            return html + '<span data-id="'+comments[c]['ids']+'" class="comment">'+comments[c]['count']+'</span>';
         });
     }
 
