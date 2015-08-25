@@ -29,10 +29,15 @@ Comming up.
 
 == TODO ==
 
+- Add little Popup Menu
 - Add close button
 - Add comment on comment function
 
 == Changelog ==
+
+= 0.3.3 =
+
+* Sentence Expansion now properly stops at punctuation of punctuation is included in selection.
 
 = 0.3.2 =
 

@@ -67,17 +67,23 @@ jQuery(function() {
     if(true){
 
         window.selecting(jQuery(wpccparams.selectors), function(selector, e) {
-
             if(selector.length){
 
-                s = window.getSelection();
-                oRange = s.getRangeAt(0);
-                oRect = oRange.getBoundingClientRect();
+                var re_chars = wpccparams.re_chars.split('')
 
-                jQuery('#add-comment').css({
-                    top: jQuery(window).scrollTop() + oRect.top + oRect.height + 10,
-                    left: jQuery(wpccparams.selectors).offset().left
-                }).removeClass('h')
+                for(var c in re_chars){
+                    var char = re_chars[c],
+                        last = selector.slice(-1),
+                        last_two = selector.slice(-2);
+
+                    if(char === last){
+                        selector = selector.substring(0, selector.length - 1);
+                    }
+
+                    if(char + ' ' === last_two){
+                        selector = selector.substring(0, selector.length - 2);
+                    }
+                }
 
                 var re_string = "["+wpccparams.re_chars+"]([^"+wpccparams.re_chars+"]*?"+RegExp.quote(selector)+".*?["+wpccparams.re_chars+"])"
                 var re = new RegExp(re_string, "g");
@@ -93,6 +99,15 @@ jQuery(function() {
                 }
 
                 jQuery('#add-comment textarea').val('').focus()
+
+                s = window.getSelection();
+                oRange = s.getRangeAt(0);
+                oRect = oRange.getBoundingClientRect();
+
+                jQuery('#add-comment').css({
+                    top: jQuery(window).scrollTop() + oRect.top + oRect.height + 10,
+                    left: jQuery(wpccparams.selectors).offset().left
+                }).removeClass('h')
             }
         });
 
