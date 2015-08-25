@@ -33,6 +33,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.4.3 =
+
+* Adjusted z-index of Add Comment Button
+
 = 0.4.2 =
 
 * Exclude comment Marker from highlighting.
