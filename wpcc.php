@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.4
+Version: 0.4.1
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -257,3 +257,53 @@ function wpcc_init() {
 	}
 
 }
+
+function wpcc_modify_content($content) {
+
+	$postid = $GLOBALS['post']->ID;
+
+	if ($postid != 0) {
+
+		$args = array(
+			'post_id' => $postid
+		);
+		$comments = get_comments($args);
+		$comments_merged = array();
+
+		foreach($comments as $comment):
+			$comment->context = get_comment_meta($comment->comment_ID, 'context');
+		endforeach;
+
+		foreach($comments as $key => $comment){
+
+			$k = $comment->context[0];
+
+		    if(!isset($comments_merged[$k])){
+		        $comments_merged[$k] = array(
+		            'count' => 0,
+		            'ids' => ''
+		        );
+		    }
+
+		    $comments_merged[$k]['count']++;
+
+		    if(strlen($comments_merged[$k]['ids']) > 0){
+		        $comments_merged[$k]['ids'] .= ','.$comment->comment_ID;
+		    } else {
+		        $comments_merged[$k]['ids'] = $comment->comment_ID;
+		    }
+		}
+
+		foreach($comments_merged as $key => $comment){
+
+			$re_base = preg_quote($key);
+            $parts = explode(' ', $re_base);
+            $re = '/('.implode('\\s*?(?:<\/?[^>]*?>)?\\s*?', $parts).')/';
+
+			$content = preg_replace($re, '$1<span data-id="'.$comments_merged[$key]['ids'].'" class="comment">'.$comments_merged[$key]['count'].'</span>', $content);
+		}
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'wpcc_modify_content' );

@@ -1,39 +1,12 @@
 jQuery(function() {
 
-    // init
-    data = jQuery.parseJSON(wpccparams.comments)
-    comments = {}
-
-    for(c in data){
-
-        if(comments[data[c]['context']] === undefined){
-            comments[data[c]['context']] = {
-                count: 0,
-                ids: ''
-            }
-        }
-
-        comments[data[c]['context']].count++
-
-        if(comments[data[c]['context']]['ids'].length > 0){
-            comments[data[c]['context']].ids += ','+data[c]['comment_ID']
-        } else {
-            comments[data[c]['context']].ids = data[c]['comment_ID']
-        }
-    }
-
-    for(c in comments){
-
-        jQuery(wpccparams.selectors+":contains('"+c+"')").html(function(_, html) {
-            return html + '<span data-id="'+comments[c]['ids']+'" class="comment">'+comments[c]['count']+'</span>';
-        });
-    }
+    var comments = jQuery.parseJSON(wpccparams.comments)
 
     jQuery('span.comment').on('click', function(){
 
         jQuery('#view-comment p').text('');
 
-        for(c in data){
+        for(c in comments){
 
             var ids = []
 
@@ -44,9 +17,9 @@ jQuery(function() {
             }
 
             for(id in ids){
-                if(ids[id].toString() === data[c]['comment_ID'].toString()){
+                if(ids[id].toString() === comments[c]['comment_ID'].toString()){
                     jQuery('#view-comment p').html(
-                        jQuery('#view-comment p').html()+data[c]['comment_content']+'<br>'
+                        jQuery('#view-comment p').html()+comments[c]['comment_content']+'<br>'
                     )
                 }
             }

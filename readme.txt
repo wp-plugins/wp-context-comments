@@ -33,6 +33,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.4.1 =
+
+* Moved content modifying (comment markers) to backend.
+
 = 0.4 =
 
 * Added popup menu.
