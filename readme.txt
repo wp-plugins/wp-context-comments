@@ -29,9 +29,11 @@ Comming up.
 
 == TODO ==
 
-- Add comment on comment function
-
 == Changelog ==
+
+= 0.4.4 =
+
+* Uses regular comment view from basic wordpress.
 
 = 0.4.3 =
 

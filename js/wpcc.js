@@ -4,9 +4,9 @@ jQuery(function() {
 
     jQuery('span.comment').on('click', function(){
 
-        jQuery('#view-comment p').text('');
+        jQuery('#view-comment .comment-list').html('');
 
-        for(c in comments){
+        // for(c in comments){
 
             var ids = []
 
@@ -17,17 +17,23 @@ jQuery(function() {
             }
 
             for(id in ids){
-                if(ids[id].toString() === comments[c]['comment_ID'].toString()){
-                    jQuery('#view-comment p').html(
-                        jQuery('#view-comment p').html()+comments[c]['comment_content']+'<br>'
-                    )
-                }
+
+                jQuery('#view-comment .comment-list').html(
+                    jQuery('#view-comment .comment-list').html()
+                    + jQuery('#comment-'+ids[id]).outer()
+                )
+
+                // if(ids[id].toString() === comments[c]['comment_ID'].toString()){
+                //     jQuery('#view-comment p').html(
+                //         jQuery('#view-comment p').html()+comments[c]['comment_content']+'<br>'
+                //     )
+                // }
             }
-        }
+        // }
 
         jQuery('#view-comment').css({
             top: jQuery(this).offset().top + jQuery(this).height() + 20,
-            left: jQuery(this).offset().left
+            left: jQuery(wpccparams.selectors).offset().left
         }).removeClass('h')
 
     })
@@ -125,4 +131,8 @@ jQuery(function() {
 
 RegExp.quote = function(str) {
     return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+};
+
+jQuery.fn.outer = function() {
+  return jQuery('<div />').append(this.eq(0).clone()).html();
 };

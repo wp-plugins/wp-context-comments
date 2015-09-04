@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.4.3
+Version: 0.4.4
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -196,7 +196,7 @@ function wpcc_footer() {
 		comment_form($comment_args, $postid);
 		echo '</div>';
 		echo '<div id="add-comment-btn" class="h" data-add-comment></div>';
-		echo '<div id="view-comment" class="h"><p></p><button id="close-comment">'.__( 'Schliessen', 'wordpress' ).'</button></div>';
+		echo '<div id="view-comment" class="h"><ol class="comment-list"></ol><button id="close-comment">'.__( 'Schliessen', 'wordpress' ).'</button></div>';
 	}
 }
 
@@ -213,7 +213,11 @@ function wpcc_init() {
 	$postid = url_to_postid($url);
 
 	$args = array(
-		'post_id' => $postid
+		'post_id' => $postid,
+		'meta_query' => array(
+			'key'   => 'type',
+			'value' => 'wpcc'
+		)
 	);
 	$comments = get_comments($args);
 	$options = get_option( 'wpcc_settings' );
@@ -229,6 +233,7 @@ function wpcc_init() {
 
 	foreach($comments as $comment):
 		$comment->context = get_comment_meta($comment->comment_ID, 'context');
+		$comment->type = get_comment_meta($comment->comment_ID, 'type');
 	endforeach;
 
 	wp_enqueue_script('selecting', $base_path . 'js/selecting.min.js');
@@ -272,9 +277,14 @@ function wpcc_modify_content($content) {
 
 		foreach($comments as $comment):
 			$comment->context = get_comment_meta($comment->comment_ID, 'context');
+			$comment->type = get_comment_meta($comment->comment_ID, 'type');
 		endforeach;
 
 		foreach($comments as $key => $comment){
+
+			if(strlen($comment->context[0]) == 0){
+				continue;
+			}
 
 			$k = $comment->context[0];
 
