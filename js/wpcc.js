@@ -2,6 +2,19 @@ jQuery(function() {
 
     var comments = jQuery.parseJSON(wpccparams.comments)
 
+    for(var c in comments){
+        var re = new RegExp(comments[c].re, 'g');
+        var m;
+
+        jQuery(wpccparams.selectors).each(function(){
+
+            jQuery(this).html(function(_, html) {
+                return html.replace(re, '$1' + '<span data-id="'+comments[c]['ids']+'" class="comment">'+comments[c]['count']+'</span>')
+            });
+
+        })
+    }
+
     jQuery('span.comment').on('click', function(){
 
         jQuery('#view-comment .comment-list').html('');

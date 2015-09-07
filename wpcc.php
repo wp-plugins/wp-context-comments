@@ -220,6 +220,8 @@ function wpcc_init() {
 		)
 	);
 	$comments = get_comments($args);
+	$comments_merged = array();
+
 	$options = get_option( 'wpcc_settings' );
 	$anon = 'false';
 
@@ -236,6 +238,37 @@ function wpcc_init() {
 		$comment->type = get_comment_meta($comment->comment_ID, 'type');
 	endforeach;
 
+	foreach($comments as $key => $comment):
+		if(strlen($comment->context[0]) == 0){
+			continue;
+		}
+
+		$k = $comment->context[0];
+		$hash = hash('md5', $k);
+
+		if(!isset($comments_merged[$hash])){
+
+			$re_base = preg_quote($k);
+			$parts = explode(' ', $re_base);
+			$re = '('.implode('\\s*?(?:<\/?[^>]*?>)?\\s*?', $parts).')';
+
+			$comments_merged[$hash] = array(
+				'context' => $k,
+				're' => $re,
+				'count' => 0,
+				'ids' => ''
+			);
+		}
+
+		$comments_merged[$hash]['count']++;
+
+		if(strlen($comments_merged[$hash]['ids']) > 0){
+			$comments_merged[$hash]['ids'] .= ','.$comment->comment_ID;
+		} else {
+			$comments_merged[$hash]['ids'] = $comment->comment_ID;
+		}
+	endforeach;
+
 	wp_enqueue_script('selecting', $base_path . 'js/selecting.min.js');
 	wp_enqueue_script('wpcc', $base_path . 'js/wpcc.js', array('jquery', 'selecting'));
 
@@ -243,7 +276,7 @@ function wpcc_init() {
 
 		wp_localize_script( 'wpcc', 'wpccparams', array(
 			'postid'       => $postid,
-			'comments'     => json_encode($comments),
+			'comments'     => json_encode($comments_merged),
 			'logged_in'    => is_user_logged_in(),
 			'selectors'    => $options['wpcc_css_selectors'],
 			're_chars'     => $options['wpcc_re_characters'],
@@ -318,4 +351,4 @@ function wpcc_modify_content($content) {
 
 	return $content;
 }
-add_filter( 'the_content', 'wpcc_modify_content' );
+//add_filter( 'the_content', 'wpcc_modify_content' );

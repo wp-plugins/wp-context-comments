@@ -31,6 +31,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.4.5 =
+
+* Moved content modifying back to js because of problems in how php handles regex and bytecode.
+
 = 0.4.4 =
 
 * Uses regular comment view from basic wordpress.
