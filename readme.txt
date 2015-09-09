@@ -31,6 +31,10 @@ Comming up.
 
 == Changelog ==
 
+= 0.4.6 =
+
+* Major overhaul. Comment Hook injection back in backend - php. Added possibility to edit comment context in backend when editing comment.
+
 = 0.4.5 =
 
 * Moved content modifying back to js because of problems in how php handles regex and bytecode.

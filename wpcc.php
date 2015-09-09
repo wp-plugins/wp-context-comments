@@ -3,7 +3,7 @@
 /*
 
 Plugin Name: WP Context Comments
-Version: 0.4.4
+Version: 0.4.6
 Plugin URI: https://github.com/thgie/wpcc
 Description: A plug-in to attach a comment to inline text - Medium style.
 Author: Adrian Demleitner
@@ -173,7 +173,7 @@ function wpcc_modify_comment( $text ){
   	$plugin_url_path = WP_PLUGIN_URL;
 
 	if( $context = get_comment_meta( get_comment_ID(), 'context', true ) ) {
-		$context = '<p class="context-at-comment">' . esc_attr( $context ) . '</p>';
+		$context = '<p class="context-at-comment"><b><i>' . esc_attr( $context ) . '</i></b></p>';
 		$text = $context . $text;
 	}
 
@@ -337,13 +337,11 @@ function wpcc_modify_content($content) {
 		    }
 		}
 
-		$style = '';
-
 		foreach($comments_merged as $key => $comment){
 
 			$re_base = preg_quote($key);
-            $parts = explode(' ', $re_base);
-            $re = '/('.implode('\\s*?(?:<\/?[^>]*?>)?\\s*?', $parts).')/';
+			$parts = array_filter(preg_split('/[\s\W]/', $re_base));
+			$re = '/('.implode('[\\s\\W]*?(?:<\/?[^>]*?>)?[\\s\\W]*?', $parts).')/';
 
 			$content = preg_replace($re, '$1<span data-id="'.$comments_merged[$key]['ids'].'" class="comment c'.$comments_merged[$key]['count'].'"></span>', $content);
 		}
@@ -351,4 +349,39 @@ function wpcc_modify_content($content) {
 
 	return $content;
 }
-//add_filter( 'the_content', 'wpcc_modify_content' );
+add_filter( 'the_content', 'wpcc_modify_content' );
+
+// edit the edit screen
+add_action( 'add_meta_boxes_comment', 'wpcc_extend_comment_add_meta_box' );
+function wpcc_extend_comment_add_meta_box() {
+    add_meta_box( 'title', __( 'Comment Context' ), 'wpcc_extend_comment_meta_box', 'comment', 'normal', 'high' );
+}
+
+function wpcc_extend_comment_meta_box ( $comment ) {
+
+    $context = get_comment_meta( $comment->comment_ID, 'context', true );
+    wp_nonce_field( 'extend_comment_update', 'extend_comment_update', false );
+
+    ?>
+
+    <p>
+        <label for="context"><?php _e( 'Context' ); ?></label>
+        <input type="text" name="context" value="<?php echo esc_attr( $context ); ?>" class="widefat" />
+    </p>
+
+    <?php
+}
+
+add_action( 'edit_comment', 'wpcc_extend_comment_edit_metafields' );
+
+function wpcc_extend_comment_edit_metafields( $comment_id ) {
+    if( ! isset( $_POST['extend_comment_update'] ) || ! wp_verify_nonce( $_POST['extend_comment_update'], 'extend_comment_update' ) ) return;
+
+	if ( ( isset( $_POST['context'] ) ) && ( $_POST['context'] != '') ) :
+		$context = wp_filter_nohtml_kses($_POST['context']);
+		update_comment_meta( $comment_id, 'context', $context );
+	else :
+		delete_comment_meta( $comment_id, 'context');
+	endif;
+
+}
